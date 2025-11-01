@@ -9,12 +9,13 @@ import cors from "cors";
 import geminiRespone from "./gemini.js";
 
 const app = express();
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://virtualassistant-4eps.onrender.com"
+  ],
+  credentials: true
+}));
 const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
