@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useEffect, useState } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
 import image1 from "../assets/image1.png";
@@ -12,12 +12,26 @@ import Card from "../components/Card";
 import { userDataContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
+// ✅ Particles import
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadFull } from "tsparticles";
+
 function Customize() {
   const { userData, backendImage, setBackendImage,
     frontendImage, setFrontendImage, selectedImage, setSelectedImage } = useContext(userDataContext);
 
   const navigate = useNavigate();
   const inputImage = useRef();
+
+  // ✅ Particle Engine Setup
+  const [init, setInit] = useState(false);
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadFull(engine);
+    }).then(() => {
+      setInit(true);
+    });
+  }, []);
 
   const handleImage = (e) => {
     const file = e.target.files[0];
@@ -35,20 +49,47 @@ function Customize() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-t from-black to-[#010178] flex flex-col items-center py-12 px-4">
-      <IoArrowBackCircleSharp className='absolute top-[30px] left-[30px] text-white w-[25px] h-[25px] cursor-pointer' onClick={handleBack}
+    <div className="relative w-full min-h-screen bg-gradient-to-t from-black to-[#010178] flex flex-col items-center py-12 px-4 overflow-hidden">
+      
+      {/* ✅ Particles Background */}
+      {init && (
+        <Particles
+          id="tsparticles"
+          className="absolute top-0 left-0 w-full h-full z-0"
+          options={{
+            background: { color: { value: "#00000000" } },
+            fpsLimit: 60,
+            interactivity: {
+              events: { onHover: { enable: true, mode: "repulse" }, resize: true },
+              modes: { repulse: { distance: 100, duration: 0.4 } },
+            },
+            particles: {
+              color: { value: "#ffffff" },
+              links: { color: "#00bfff", distance: 120, enable: true, opacity: 0.3, width: 1 },
+              move: { enable: true, speed: 2 },
+              number: { value: 60, density: { enable: true, area: 800 } },
+              opacity: { value: 0.6 },
+              shape: { type: "circle" },
+              size: { value: { min: 1, max: 3 } },
+            },
+            detectRetina: true,
+          }}
+        />
+      )}
+
+      <IoArrowBackCircleSharp className='absolute top-[30px] left-[30px] text-white w-[25px] h-[25px] cursor-pointer z-10' onClick={handleBack}
       />
 
-      <h1 className="text-white text-3xl md:text-4xl font-bold text-center mb-4">
+      <h1 className="text-white text-3xl md:text-4xl font-bold text-center mb-4 z-10">
         Customize Your <span className="text-blue-500">Assistant Image</span>
       </h1>
 
-      <p className="text-gray-300 text-center max-w-[600px] mb-12">
+      <p className="text-gray-300 text-center max-w-[600px] mb-12 z-10">
         Choose from the available options or upload your own image to personalize your assistant.
       </p>
 
       {/* Grid for Cards */}
-      <div className="w-full max-w-[1200px] grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 mb-12">
+      <div className="w-full max-w-[1200px] grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 mb-12 z-10">
         <Card image={image1} />
         <Card image={image2} />
         <Card image={authBg} />
@@ -84,7 +125,7 @@ function Customize() {
       {selectedImage && (
         <button
           className="w-[280px] h-14 rounded-xl font-semibold text-lg 
-        bg-blue-500 hover:bg-blue-600 cursor-pointer text-white transition-all duration-300 shadow-md hover:shadow-xl"
+        bg-blue-500 hover:bg-blue-600 cursor-pointer text-white transition-all duration-300 shadow-md hover:shadow-xl z-10"
           onClick={() => navigate("/customize2")}
         >
           Next

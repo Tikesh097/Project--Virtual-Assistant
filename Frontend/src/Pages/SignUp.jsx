@@ -1,11 +1,14 @@
 import bg from "../assets/authBg.png";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { userDataContext } from "../context/UserContext.jsx";
 import axios from "axios";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadFull } from "tsparticles";
 
 function SignUp() {
+  const [init, setInit] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,8 +16,15 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { serverUrl, userData, setUserData } = useContext(userDataContext);
+  const { serverUrl, setUserData } = useContext(userDataContext);
   const navigate = useNavigate();
+
+  // 🟣 Initialize tsparticles
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadFull(engine);
+    }).then(() => setInit(true));
+  }, []);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -25,30 +35,62 @@ function SignUp() {
       const result = await axios.post(
         `${serverUrl}/api/auth/signup`,
         { name, email, password },
-        { withCredentials: true });
-
-     setUserData(result.data)
+        { withCredentials: true }
+      );
+      setUserData(result.data);
       setLoading(false);
       navigate("/customize");
-
     } catch (error) {
       console.log(error);
-      setUserData(null)
-      setLoading(false)
+      setUserData(null);
+      setLoading(false);
       setErr(error.response?.data?.message || "Something went wrong. Try again.");
-    } 
+    }
   };
 
   return (
-    <div
-      className="w-full h-screen bg-cover flex justify-center items-center px-4"
-      style={{ backgroundImage: `url(${bg})` }}
-    >
+    <div className="relative w-full h-screen flex justify-center items-center px-4 overflow-hidden">
+      {/* Background image */}
+      <img
+        src={bg}
+        alt="background"
+        className="absolute inset-0 w-full h-full object-cover blur-sm"
+      />
+
+      {/* Particles Background */}
+      {init && (
+        <Particles
+          id="tsparticles"
+          className="absolute inset-0"
+          options={{
+            background: { color: { value: "transparent" } },
+            fpsLimit: 120,
+            interactivity: {
+              events: {
+                onHover: { enable: true, mode: "repulse" },
+                resize: true,
+              },
+              modes: { repulse: { distance: 100, duration: 0.4 } },
+            },
+            particles: {
+              color: { value: "#60a5fa" },
+              links: { color: "#60a5fa", distance: 120, enable: true, opacity: 0.3, width: 1 },
+              move: { enable: true, speed: 1.2, direction: "none", outModes: "out" },
+              number: { value: 45, density: { enable: true, area: 800 } },
+              opacity: { value: 0.5 },
+              shape: { type: "circle" },
+              size: { value: { min: 1, max: 4 } },
+            },
+            detectRetina: true,
+          }}
+        />
+      )}
+
+      {/* SignUp Form */}
       <form
         onSubmit={handleSignUp}
-        className="w-full max-w-md bg-black/60 backdrop-blur-md shadow-2xl shadow-black rounded-2xl p-8 flex flex-col gap-6"
+        className="relative w-full max-w-md bg-black/60 backdrop-blur-md shadow-2xl shadow-black rounded-2xl p-8 flex flex-col gap-6 z-10"
       >
-        {/* Title */}
         <h1 className="text-white text-3xl font-bold text-center">
           Create Your <span className="text-blue-400">Account</span>
         </h1>
@@ -56,14 +98,12 @@ function SignUp() {
           Join Virtual Assistant and make your work smarter 🚀
         </p>
 
-        {/* Error Box */}
         {err && (
           <div className="w-full bg-red-600/20 text-red-400 border border-red-500 rounded-md px-4 py-2 text-sm text-center">
             {err}
           </div>
         )}
 
-        {/* Name */}
         <input
           type="text"
           placeholder="Full Name"
@@ -73,7 +113,6 @@ function SignUp() {
           value={name}
         />
 
-        {/* Email */}
         <input
           type="email"
           placeholder="Email Address"
@@ -83,7 +122,6 @@ function SignUp() {
           value={email}
         />
 
-        {/* Password */}
         <div className="relative w-full">
           <input
             type={showPassword ? "text" : "password"}
@@ -106,17 +144,18 @@ function SignUp() {
           )}
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
-          className={`w-full h-14 mt-2 rounded-xl font-semibold text-lg transition 
-            ${loading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+          className={`w-full h-14 mt-2 rounded-xl font-semibold text-lg transition ${
+            loading
+              ? "bg-blue-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600 text-white"
+          }`}
         >
           {loading ? "Registering..." : "Register"}
         </button>
 
-        {/* Bottom Link */}
         <p className="text-gray-300 text-center text-sm">
           Already have an account?{" "}
           <span
