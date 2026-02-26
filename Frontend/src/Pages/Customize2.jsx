@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { userDataContext } from '../context/UserContext';
 import { IoArrowBackCircleSharp } from "react-icons/io5";
@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 // ✅ Particles imports
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadFull } from "tsparticles";
+import { loadSlim } from "@tsparticles/slim";
 
 function Customize2() {
     const { userData, backendImage, selectedImage, serverUrl, setUserData } = useContext(userDataContext);
@@ -18,7 +18,7 @@ function Customize2() {
     const [init, setInit] = useState(false);
     useEffect(() => {
         initParticlesEngine(async (engine) => {
-            await loadFull(engine);
+            await loadSlim(engine);
         }).then(() => {
             setInit(true);
         });

@@ -5,7 +5,7 @@ import axios from "axios";
 export const userDataContext = createContext();
 
 function UserContext({ children }) {
-  const serverUrl = "https://tikesh-virtual-assistant-backend.onrender.com";
+  const serverUrl = import.meta.env.VITE_SERVER_URL || "https://tikesh-virtual-assistant-backend.onrender.com";
 
   const [userData, setUserData] = useState(null)
   const [frontendImage, setFrontendImage] = useState(null)

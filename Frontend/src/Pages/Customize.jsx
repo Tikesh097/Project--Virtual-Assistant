@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useEffect, useState } from "react";
+import { useContext, useRef, useEffect, useState } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
 import image1 from "../assets/image1.png";
@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 // ✅ Particles import
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadFull } from "tsparticles";
+import { loadSlim } from "@tsparticles/slim";
 
 function Customize() {
   const { userData, backendImage, setBackendImage,
@@ -27,7 +27,7 @@ function Customize() {
   const [init, setInit] = useState(false);
   useEffect(() => {
     initParticlesEngine(async (engine) => {
-      await loadFull(engine);
+      await loadSlim(engine);
     }).then(() => {
       setInit(true);
     });

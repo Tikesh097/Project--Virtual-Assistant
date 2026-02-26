@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { userDataContext } from "../context/UserContext.jsx";
 import axios from "axios";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadFull } from "tsparticles";
+import { loadSlim } from "@tsparticles/slim";
 
 function SignUp() {
   const [init, setInit] = useState(false);
@@ -22,7 +22,7 @@ function SignUp() {
   // 🟣 Initialize tsparticles
   useEffect(() => {
     initParticlesEngine(async (engine) => {
-      await loadFull(engine);
+      await loadSlim(engine);
     }).then(() => setInit(true));
   }, []);
 
